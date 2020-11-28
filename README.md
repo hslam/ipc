@@ -33,6 +33,7 @@ import (
 var send = flag.Bool("s", true, "send")
 
 func main() {
+	flag.Parse()
 	key, _ := ipc.Ftok("/tmp", 0x22)
 	semid, _ := ipc.Semget(key)
 	defer ipc.Semrm(semid)
@@ -89,13 +90,13 @@ func main() {
 #### Output
 Enter a word.
 ```sh
-$ go run main.go -s true
+$ go run main.go -s=true
 Enter:
 HelloWorld
 ```
 In another terminal receive this word.
 ```sh
-$ go run main.go -s false
+$ go run main.go -s=false
 Recv:
 HelloWorld
 ```
