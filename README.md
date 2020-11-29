@@ -7,6 +7,12 @@
 
 Package ipc provides a way to use System V IPC. System V IPC includes three interprocess communication mechanisms that are widely available on UNIX systems: message queues, semaphore, and shared memory.
 
+## Features
+* [Ftok](https://github.com/hslam/ftok "ftok")
+* [Message queues](https://github.com/hslam/msg "msg")
+* [Semaphores](https://github.com/hslam/sem "sem")
+* [Shared memory](https://github.com/hslam/shm "shm")
+
 ## Get started
 
 ### Install
