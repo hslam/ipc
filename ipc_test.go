@@ -4,6 +4,7 @@
 package ipc
 
 import (
+	"github.com/hslam/sem"
 	"strings"
 	"testing"
 	"time"
@@ -12,21 +13,31 @@ import (
 func TestIPC(t *testing.T) {
 	context := strings.Repeat("1", 64)
 	done := make(chan struct{})
+	semnum := 0
 	go func() {
 		key, _ := Ftok("/tmp", 0x22)
-		semid, _ := Semget(key)
+		semid, err := Semget(key, 1, 0600)
+		if err != nil {
+			semid, err = Semget(key, 1, IPC_CREAT|IPC_EXCL|0600)
+			if err != nil {
+				panic(err)
+			}
+			_, err := Semsetvalue(semid, semnum, 1)
+			if err != nil {
+				panic(err)
+			}
+		}
 		defer Semrm(semid)
 		shmid, data, _ := Shmgetat(key, 128, IPC_CREAT|0600)
 		defer Shmrm(shmid)
 		defer Shmdt(data)
 		msgid, _ := Msgget(key, IPC_CREAT|0600)
 		defer Msgrm(msgid)
-
-		if _, err := Semp(semid, SEM_UNDO); err != nil {
+		if _, err := Semp(semid, semnum, SEM_UNDO); err != nil {
 			return
 		}
 		copy(data, context)
-		if _, err := Semv(semid, SEM_UNDO); err != nil {
+		if _, err := Semv(semid, semnum, SEM_UNDO); err != nil {
 			return
 		}
 		if err := Msgsnd(msgid, 1, []byte{byte(len(context))}, 0600); err != nil {
@@ -39,12 +50,22 @@ func TestIPC(t *testing.T) {
 	time.Sleep(time.Millisecond * 100)
 
 	key, _ := Ftok("/tmp", 0x22)
-	semid, _ := Semget(key)
+	semid, err := Semget(key, 1, 0600)
+	if err != nil {
+		semid, err = Semget(key, 1, IPC_CREAT|IPC_EXCL|0600)
+		if err != nil {
+			panic(err)
+		}
+		_, err := Semsetvalue(semid, semnum, 1)
+		if err != nil {
+			panic(err)
+		}
+	}
 	defer Semrm(semid)
-	shmid, data, _ := Shmgetat(key, 128, IPC_CREAT|0600)
+	shmid, data, _ := Shmgetat(key, 128, 0600)
 	defer Shmrm(shmid)
 	defer Shmdt(data)
-	msgid, _ := Msgget(key, IPC_CREAT|0600)
+	msgid, _ := Msgget(key, 0600)
 	defer Msgrm(msgid)
 
 	m, err := Msgrcv(msgid, 1, 0600)
@@ -52,16 +73,20 @@ func TestIPC(t *testing.T) {
 		return
 	}
 	length := int(m[0])
-	if ret, err := Semgetvalue(semid); err != nil {
+	if ret, err := Semgetvalue(semid, semnum); err != nil {
 		t.Error(err)
 	} else if ret < 1 {
 		t.Error()
 	}
-	if _, err := Semp(semid, SEM_UNDO); err != nil {
+	var sops [1]sem.Sembuf
+	sops[0] = sem.Sembuf{SemNum: uint16(semnum), SemFlg: SEM_UNDO}
+	sops[0].SemOp = -1
+	if _, err := Semop(semid, sops[:]); err != nil {
 		return
 	}
 	text := string(data[:length])
-	if _, err := Semv(semid, SEM_UNDO); err != nil {
+	sops[0].SemOp = 1
+	if _, err := Semop(semid, sops[:]); err != nil {
 		return
 	}
 

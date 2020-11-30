@@ -8,21 +8,21 @@ import (
 )
 
 // Msgget calls the msgget system call.
-func Msgget(key int, msgflg int) (uintptr, error) {
+func Msgget(key int, msgflg int) (int, error) {
 	return msg.Get(key, msgflg)
 }
 
 // Msgsnd calls the msgsnd system call.
-func Msgsnd(msgid uintptr, msgType uint, msgText []byte, flags uint) error {
+func Msgsnd(msgid int, msgType uint, msgText []byte, flags int) error {
 	return msg.Snd(msgid, msgType, msgText, flags)
 }
 
 // Msgrcv calls the msgrcv system call.
-func Msgrcv(msgid uintptr, msgType uint, flags uint) ([]byte, error) {
+func Msgrcv(msgid int, msgType uint, flags int) ([]byte, error) {
 	return msg.Rcv(msgid, msgType, flags)
 }
 
 // Msgrm removes the shm with the given id.
-func Msgrm(msgid uintptr) error {
+func Msgrm(msgid int) error {
 	return msg.Remove(msgid)
 }

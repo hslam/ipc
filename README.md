@@ -43,7 +43,18 @@ var send = flag.Bool("s", true, "send")
 func main() {
 	flag.Parse()
 	key, _ := ipc.Ftok("/tmp", 0x22)
-	semid, _ := ipc.Semget(key)
+	semnum := 0
+	semid, err := ipc.Semget(key, 1, 0666)
+	if err != nil {
+		semid, err = ipc.Semget(key, 1, ipc.IPC_CREAT|ipc.IPC_EXCL|0666)
+		if err != nil {
+			panic(err)
+		}
+		_, err := ipc.Semsetvalue(semid, semnum, 1)
+		if err != nil {
+			panic(err)
+		}
+	}
 	defer ipc.Semrm(semid)
 	shmid, data, _ := ipc.Shmgetat(key, 128, ipc.IPC_CREAT|0600)
 	defer ipc.Shmrm(shmid)
@@ -60,11 +71,11 @@ func main() {
 			buf := make([]byte, 10)
 			for {
 				fmt.Scanln(&text)
-				if _, err := ipc.Semp(semid, ipc.SEM_UNDO); err != nil {
+				if _, err := ipc.Semp(semid, semnum, ipc.SEM_UNDO); err != nil {
 					return
 				}
 				copy(data, text)
-				if _, err := ipc.Semv(semid, ipc.SEM_UNDO); err != nil {
+				if _, err := ipc.Semv(semid, semnum, ipc.SEM_UNDO); err != nil {
 					return
 				}
 				n := binary.PutUvarint(buf, uint64(len(text)))
@@ -80,11 +91,11 @@ func main() {
 					return
 				}
 				length, _ := binary.Uvarint(m)
-				if _, err := ipc.Semp(semid, ipc.SEM_UNDO); err != nil {
+				if _, err := ipc.Semp(semid, semnum, ipc.SEM_UNDO); err != nil {
 					return
 				}
 				text = string(data[:length])
-				if _, err := ipc.Semv(semid, ipc.SEM_UNDO); err != nil {
+				if _, err := ipc.Semv(semid, semnum, ipc.SEM_UNDO); err != nil {
 					return
 				}
 				fmt.Println(text)

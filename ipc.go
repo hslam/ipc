@@ -8,13 +8,16 @@ package ipc
 
 const (
 	// IPC_CREAT creates if key is nonexistent
-	IPC_CREAT = 00001000
+	IPC_CREAT = 01000
 
 	// IPC_EXCL fails if key exists.
-	IPC_EXCL = 00002000
+	IPC_EXCL = 02000
 
 	// IPC_NOWAIT returns error no wait.
 	IPC_NOWAIT = 04000
+
+	// IPC_PRIVATE is private key
+	IPC_PRIVATE = 00000
 
 	// SEM_UNDO sets up adjust on exit entry
 	SEM_UNDO = 010000

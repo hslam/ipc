@@ -8,7 +8,7 @@ import (
 )
 
 // Shmgetat calls the shmget and shmat system call.
-func Shmgetat(key int, size int, shmFlg int) (uintptr, []byte, error) {
+func Shmgetat(key int, size int, shmFlg int) (int, []byte, error) {
 	return shm.GetAt(key, size, shmFlg)
 }
 
@@ -18,6 +18,6 @@ func Shmdt(b []byte) error {
 }
 
 // Shmrm removes the shm with the given id.
-func Shmrm(shmid uintptr) error {
+func Shmrm(shmid int) error {
 	return shm.Remove(shmid)
 }
