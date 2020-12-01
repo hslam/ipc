@@ -5,7 +5,15 @@ package ipc
 
 import (
 	"github.com/hslam/sem"
+	"unsafe"
 )
+
+// Sembuf represents an operation.
+type Sembuf struct {
+	SemNum uint16
+	SemOp  int16
+	SemFlg int16
+}
 
 // Semget calls the semget system call.
 //
@@ -56,15 +64,37 @@ func Semv(semid int, semnum int, semflg int) (bool, error) {
 }
 
 // Semop calls the semop system call.
+//
+// semop() performs operations on selected semaphores in the set indi‐
+// cated by semid.  Each of the nsops elements in the array pointed to
+// by sops is a structure that specifies an operation to be performed on
+// a single semaphore.  The elements of this structure are of type
+// struct sembuf, containing the following members:
+//
+// unsigned short sem_num;  /* semaphore number */
+// short          sem_op;   /* semaphore operation */
+// short          sem_flg;  /* operation flags */
+//
+// Flags recognized in sem_flg are IPC_NOWAIT and SEM_UNDO.
+// If an operation specifies SEM_UNDO, it will be automatically undone when the
+// process terminates.
+//
+// The set of operations contained in sops is performed in array order,
+// and atomically, that is, the operations are performed either as a
+// complete unit, or not at all.  The behavior of the system call if not
+// all operations can be performed immediately depends on the presence
+// of the IPC_NOWAIT flag in the individual sem_flg fields, as noted be‐
+// low.
+func Semop(semid int, sops uintptr, nsops int) (bool, error) {
+	return sem.Op(semid, sops, nsops)
+}
+
+// Semoperate calls the semop system call.
 // Flags recognized in SemFlg are IPC_NOWAIT and SEM_UNDO.
 // If an operation specifies SEM_UNDO, it will be automatically undone when the
 // process terminates.
-// Op calls the semop system call.
-// Flags recognized in SemFlg are IPC_NOWAIT and SEM_UNDO.
-// If an operation specifies SEM_UNDO, it will be automatically undone when the
-// process terminates.
-func Semop(semid int, sops []sem.Sembuf) (bool, error) {
-	return sem.Op(semid, sops)
+func Semoperate(semid int, sops []Sembuf) (bool, error) {
+	return Semop(semid, uintptr(unsafe.Pointer(&sops[0])), len(sops))
 }
 
 // Semrm removes the semaphore with the given id.

@@ -4,7 +4,6 @@
 package ipc
 
 import (
-	"github.com/hslam/sem"
 	"strings"
 	"testing"
 	"time"
@@ -182,15 +181,15 @@ func TestMore(t *testing.T) {
 	} else if ret < 1 {
 		t.Error()
 	}
-	var sops [1]sem.Sembuf
-	sops[0] = sem.Sembuf{SemNum: uint16(semnum), SemFlg: SEM_UNDO}
+	var sops [1]Sembuf
+	sops[0] = Sembuf{SemNum: uint16(semnum), SemFlg: SEM_UNDO}
 	sops[0].SemOp = -1
-	if _, err := Semop(semid, sops[:]); err != nil {
+	if _, err := Semoperate(semid, sops[:]); err != nil {
 		return
 	}
 	text := string(data[:length])
 	sops[0].SemOp = 1
-	if _, err := Semop(semid, sops[:]); err != nil {
+	if _, err := Semoperate(semid, sops[:]); err != nil {
 		return
 	}
 
