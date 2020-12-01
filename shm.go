@@ -12,24 +12,24 @@ func Shmget(key int, size int, shmFlg int) (int, error) {
 	return shm.Get(key, size, shmFlg)
 }
 
-// Shmattach calls the shmat system call.
-func Shmattach(shmid int, shmFlg int) (uintptr, error) {
-	return shm.Attach(shmid, shmFlg)
+// Shmat calls the shmat system call.
+func Shmat(shmid int, shmFlg int) (uintptr, error) {
+	return shm.At(shmid, shmFlg)
 }
 
-// Shmdetach calls the shmdt system call.
-func Shmdetach(addr uintptr) error {
-	return shm.Detach(addr)
+// Shmdt calls the shmdt system call.
+func Shmdt(addr uintptr) error {
+	return shm.Dt(addr)
 }
 
-// Shmgetat calls the shmget and shmat system call.
-func Shmgetat(key int, size int, shmFlg int) (int, []byte, error) {
-	return shm.GetAt(key, size, shmFlg)
+// Shmgetattach calls the shmget and shmat system call.
+func Shmgetattach(key int, size int, shmFlg int) (int, []byte, error) {
+	return shm.GetAttach(key, size, shmFlg)
 }
 
-// Shmdt calls the shmdt system call with []byte b.
-func Shmdt(b []byte) error {
-	return shm.Dt(b)
+// Shmdetach calls the shmdt system call with []byte b.
+func Shmdetach(b []byte) error {
+	return shm.Detach(b)
 }
 
 // Shmrm removes the shm with the given id.

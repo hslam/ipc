@@ -56,9 +56,9 @@ func main() {
 		}
 	}
 	defer ipc.Semrm(semid)
-	shmid, data, _ := ipc.Shmgetat(key, 128, ipc.IPC_CREAT|0600)
+	shmid, data, _ := ipc.Shmgetattach(key, 128, ipc.IPC_CREAT|0600)
 	defer ipc.Shmrm(shmid)
-	defer ipc.Shmdt(data)
+	defer ipc.Shmdetach(data)
 	msgid, _ := ipc.Msgget(key, ipc.IPC_CREAT|0600)
 	defer ipc.Msgrm(msgid)
 	var text string

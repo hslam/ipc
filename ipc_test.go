@@ -29,9 +29,9 @@ func TestIPC(t *testing.T) {
 			}
 		}
 		defer Semrm(semid)
-		shmid, data, _ := Shmgetat(key, 128, IPC_CREAT|0600)
+		shmid, data, _ := Shmgetattach(key, 128, IPC_CREAT|0600)
 		defer Shmrm(shmid)
-		defer Shmdt(data)
+		defer Shmdetach(data)
 		msgid, _ := Msgget(key, IPC_CREAT|0600)
 		defer Msgrm(msgid)
 		if _, err := Semp(semid, semnum, SEM_UNDO); err != nil {
@@ -63,9 +63,9 @@ func TestIPC(t *testing.T) {
 		}
 	}
 	defer Semrm(semid)
-	shmid, data, _ := Shmgetat(key, 128, 0600)
+	shmid, data, _ := Shmgetattach(key, 128, 0600)
 	defer Shmrm(shmid)
-	defer Shmdt(data)
+	defer Shmdetach(data)
 	msgid, _ := Msgget(key, 0600)
 	defer Msgrm(msgid)
 
@@ -111,9 +111,9 @@ func TestMore(t *testing.T) {
 			}
 		}
 		defer Semrm(semid)
-		shmid, data, _ := Shmgetat(key, 128, IPC_CREAT|0600)
+		shmid, data, _ := Shmgetattach(key, 128, IPC_CREAT|0600)
 		defer Shmrm(shmid)
-		defer Shmdt(data)
+		defer Shmdetach(data)
 		msgid, _ := Msgget(key, IPC_CREAT|0600)
 		defer Msgrm(msgid)
 		if _, err := Semp(semid, semnum, SEM_UNDO); err != nil {
@@ -148,14 +148,14 @@ func TestMore(t *testing.T) {
 	size := 128
 	shmid, _ := Shmget(key, size, 0600)
 	defer Shmrm(shmid)
-	shmaddr, _ := Shmattach(shmid, 0600)
+	shmaddr, _ := Shmat(shmid, 0600)
 	var sl = struct {
 		addr uintptr
 		len  int
 		cap  int
 	}{shmaddr, size, size}
 	data := *(*[]byte)(unsafe.Pointer(&sl))
-	defer Shmdetach(shmaddr)
+	defer Shmdt(shmaddr)
 	msgid, _ := Msgget(key, 0600)
 	defer Msgrm(msgid)
 
