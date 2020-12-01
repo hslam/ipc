@@ -13,13 +13,23 @@ func Msgget(key int, msgflg int) (int, error) {
 }
 
 // Msgsnd calls the msgsnd system call.
-func Msgsnd(msgid int, msgType uint, msgText []byte, flags int) error {
-	return msg.Snd(msgid, msgType, msgText, flags)
+func Msgsnd(msgid int, msgp uintptr, msgsz int, msgflg int) error {
+	return msg.Snd(msgid, msgp, msgsz, msgflg)
 }
 
 // Msgrcv calls the msgrcv system call.
-func Msgrcv(msgid int, msgType uint, flags int) ([]byte, error) {
-	return msg.Rcv(msgid, msgType, flags)
+func Msgrcv(msgid int, msgp uintptr, msgsz int, msgtyp uint, msgflg int) (int, error) {
+	return msg.Rcv(msgid, msgp, msgsz, msgtyp, msgflg)
+}
+
+// Msgsend calls the msgsnd system call.
+func Msgsend(msgid int, msgType uint, msgText []byte, flags int) error {
+	return msg.Send(msgid, msgType, msgText, flags)
+}
+
+// Msgreceive calls the msgrcv system call.
+func Msgreceive(msgid int, msgType uint, flags int) ([]byte, error) {
+	return msg.Receive(msgid, msgType, flags)
 }
 
 // Msgrm removes the shm with the given id.

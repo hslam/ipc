@@ -79,14 +79,14 @@ func main() {
 					return
 				}
 				n := binary.PutUvarint(buf, uint64(len(text)))
-				if err := ipc.Msgsnd(msgid, 1, buf[:n], 0600); err != nil {
+				if err := ipc.Msgsend(msgid, 1, buf[:n], 0600); err != nil {
 					return
 				}
 			}
 		} else {
 			fmt.Println("Recv:")
 			for {
-				m, err := ipc.Msgrcv(msgid, 1, 0600)
+				m, err := ipc.Msgreceive(msgid, 1, 0600)
 				if err != nil {
 					return
 				}

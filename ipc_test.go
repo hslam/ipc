@@ -41,7 +41,7 @@ func TestIPC(t *testing.T) {
 		if _, err := Semv(semid, semnum, SEM_UNDO); err != nil {
 			return
 		}
-		if err := Msgsnd(msgid, 1, []byte{byte(len(context))}, 0600); err != nil {
+		if err := Msgsend(msgid, 1, []byte{byte(len(context))}, 0600); err != nil {
 			return
 		}
 
@@ -69,7 +69,7 @@ func TestIPC(t *testing.T) {
 	msgid, _ := Msgget(key, 0600)
 	defer Msgrm(msgid)
 
-	m, err := Msgrcv(msgid, 1, 0600)
+	m, err := Msgreceive(msgid, 1, 0600)
 	if err != nil {
 		return
 	}
@@ -97,6 +97,7 @@ func TestMore(t *testing.T) {
 	context := strings.Repeat("1", 64)
 	done := make(chan struct{})
 	semnum := 0
+	msgType := uint(1)
 	go func() {
 		key, _ := Ftok("/tmp", 0x22)
 		semid, err := Semget(key, 1, 0600)
@@ -123,10 +124,15 @@ func TestMore(t *testing.T) {
 		if _, err := Semv(semid, semnum, SEM_UNDO); err != nil {
 			return
 		}
-		if err := Msgsnd(msgid, 1, []byte{byte(len(context))}, 0600); err != nil {
+		st := struct {
+			Type uint
+			Text [8192]byte
+		}{}
+		st.Type = msgType
+		n := copy(st.Text[:], []byte{byte(len(context))})
+		if err := Msgsnd(msgid, uintptr(unsafe.Pointer(&st)), n, 0600); err != nil {
 			return
 		}
-
 		time.Sleep(time.Millisecond * 200)
 		close(done)
 	}()
@@ -158,12 +164,19 @@ func TestMore(t *testing.T) {
 	defer Shmdt(shmaddr)
 	msgid, _ := Msgget(key, 0600)
 	defer Msgrm(msgid)
-
-	m, err := Msgrcv(msgid, 1, 0600)
+	st := struct {
+		Type uint
+		Text [8192]byte
+	}{}
+	st.Type = msgType
+	sz, err := Msgrcv(msgid, uintptr(unsafe.Pointer(&st)), 8192, msgType, 0600)
 	if err != nil {
 		return
 	}
-	length := int(m[0])
+	if sz < 1 {
+		t.Error()
+	}
+	length := int(st.Text[0])
 	if ret, err := Semgetvalue(semid, semnum); err != nil {
 		t.Error(err)
 	} else if ret < 1 {
