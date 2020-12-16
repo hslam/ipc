@@ -1,6 +1,6 @@
 # ipc
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/hslam/ipc)](https://pkg.go.dev/github.com/hslam/ipc)
-[![Build Status](https://travis-ci.org/hslam/ipc.svg?branch=master)](https://travis-ci.org/hslam/ipc)
+[![Build Status](https://api.travis-ci.com/hslam/ipc.svg?branch=master)](https://travis-ci.com/hslam/ipc)
 [![codecov](https://codecov.io/gh/hslam/ipc/branch/master/graph/badge.svg)](https://codecov.io/gh/hslam/ipc)
 [![Go Report Card](https://goreportcard.com/badge/github.com/hslam/ipc)](https://goreportcard.com/report/github.com/hslam/ipc)
 [![LICENSE](https://img.shields.io/github/license/hslam/ipc.svg?style=flat-square)](https://github.com/hslam/ipc/blob/master/LICENSE)
