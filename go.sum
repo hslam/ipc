@@ -1,0 +1,9 @@
+github.com/hslam/ftok v1.0.0 h1:p+cxCKJ+A+exuYPTmr+tz036OMrEosvOHVsCPpzm3nI=
+github.com/hslam/ftok v1.0.0/go.mod h1:2ABEYCrEJ3EVr7SPlNCMEyGJUJye2mB9Wc9t3ET7Ngg=
+github.com/hslam/mmap v1.0.0/go.mod h1:mtuj54WoaupC65QteY9RubXVPkQT86Q/Xj0WPzRefFw=
+github.com/hslam/msg v1.0.0 h1:TXacyOHFypxD7IdYhWPqBZNlexMwUosaYnIwdJ/mfw8=
+github.com/hslam/msg v1.0.0/go.mod h1:TYk5jcCdY0UJBix9ZjFML8f7j1Z/99ayjr2D9aspbhI=
+github.com/hslam/sem v1.0.0 h1:sc57NYSRUKFjooN/tVHYAAm7Wen5rWcsDno1LlbEQfc=
+github.com/hslam/sem v1.0.0/go.mod h1:tx3gm++Xt7uYJbszwrXFKJ4KbZvWbrBG3Cm+9u7s7Ik=
+github.com/hslam/shm v1.0.0 h1:XTaZEdgxIq75XTrGAYSgpYP561B4zKn/woZPyZ9ZGuw=
+github.com/hslam/shm v1.0.0/go.mod h1:s4AkLKgMzUOtYoCvw9HTiAH6U3IGXdHpf0cvXrBAs50=
